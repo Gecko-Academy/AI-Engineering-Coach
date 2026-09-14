@@ -1,0 +1,21 @@
+# A labelled set for the Dev3Pack cohort corpus (units/en of the published repo).
+# Questions are written the way a learner asks them, NOT the way the pages are
+# worded -- a set phrased in the corpus's own vocabulary flatters the baseline
+# and measures nothing. Expect the first number you get to be low.
+{"question": "how do I hand in a session", "expected": ["unit0/how-to-submit"]}
+{"question": "where do I submit my work", "expected": ["unit0/how-to-submit"]}
+{"question": "do I need an API key to do the exercises", "expected": ["unit0/runtime-lanes", "unit0/onboarding"]}
+{"question": "can I run this without a GPU", "expected": ["unit0/runtime-lanes"]}
+{"question": "what do I install to get started", "expected": ["unit0/onboarding"]}
+{"question": "what happens in week 1", "expected": ["unit0/week1"]}
+{"question": "how do I set up my coding assistant", "expected": ["unit1/session-01-assistant-configuration/introduction"]}
+{"question": "which file do the repository instructions go in", "expected": ["unit1/session-01-assistant-configuration/concepts-1", "unit1/session-01-assistant-configuration/concepts-2"]}
+{"question": "how do I call a model without using a vendor SDK", "expected": ["unit1/session-02-model-adapter/introduction", "unit1/session-02-model-adapter/concepts-1"]}
+{"question": "what happens when the model returns bad JSON", "expected": ["unit1/session-03-structured-outputs/introduction", "unit1/session-03-structured-outputs/concepts-1"]}
+{"question": "how do I stop a tool doing something dangerous", "expected": ["unit1/session-04-bounded-tools/introduction"]}
+{"question": "what stops an agent looping forever", "expected": ["unit1/session-05-deterministic-mini-agent/introduction"]}
+{"question": "what is prompt injection", "expected": ["unit1/session-04-bounded-tools/introduction", "unit1/session-04-bounded-tools/concepts-1"]}
+{"question": "is there anything optional I can read", "expected": ["bonus/b01-graph-rag/introduction", "tracks/depth/introduction"]}
+{"question": "what is the capstone project", "expected": ["unit0/introduction", "tracks/final-assignment/introduction"]}
+{"question": "what is the airspeed velocity of an unladen swallow", "expect_refusal": true}
+{"question": "how do I deploy a Kubernetes ingress controller", "expect_refusal": true}

@@ -1,0 +1,37 @@
+[project]
+name = "course-coach"
+version = "0.1.0"
+description = "Ask a course a question, measure what answers it, and improve it."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+keywords = ["retrieval", "rag", "education", "harness", "evaluation"]
+# No runtime dependencies, on purpose: a tool people are asked to fork should
+# install anywhere, in one step, with nothing to build.
+dependencies = []
+
+[project.scripts]
+course-coach = "course_coach.cli:main"
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.6", "mypy>=1.11"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/course_coach"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
