@@ -25,7 +25,9 @@ def _pages(argument: str | None) -> Path:
     return Path(argument) if argument else Path.cwd()
 
 
-def _ask(question: str, pages: Path, provider: str, model: str, top_k: int) -> int:
+def _ask(
+    question: str, pages: Path, provider: str, model: str, top_k: int, retriever_name: str = ""
+) -> int:
     documents = corpus.load(pages)
     if not documents:
         print(f"no pages under {pages}", file=sys.stderr)
@@ -36,7 +38,12 @@ def _ask(question: str, pages: Path, provider: str, model: str, top_k: int) -> i
         print(str(error), file=sys.stderr)
         return 2
 
-    result = answer(question, documents, client=client, top_k=top_k)
+    chosen = _retriever(retriever_name, documents)
+    result = (
+        answer(question, documents, client=client, top_k=top_k)
+        if chosen is None
+        else answer(question, documents, client=client, retriever=chosen, top_k=top_k)
+    )
 
     if result.refused:
         print(f"\n  {result.reason}.\n")
@@ -65,15 +72,36 @@ def _ask(question: str, pages: Path, provider: str, model: str, top_k: int) -> i
     return 0
 
 
-def _measure(pages: Path, cases_path: Path, top_k: int) -> int:
+def _retriever(name: str, documents):  # type: ignore[no-untyped-def]
+    """The keyword baseline, or an embedding index when one is asked for."""
+    if name in ("", "keyword"):
+        return None
+    if name != "chroma":
+        raise ValueError(f"unknown retriever {name!r}. Known: keyword, chroma")
+    from gecko_ai_coach.vector import build
+
+    return build(documents)
+
+
+def _measure(pages: Path, cases_path: Path, top_k: int, retriever_name: str = "") -> int:
     documents = corpus.load(pages)
     try:
         cases = load_cases(cases_path)
     except CaseError as error:
         print(str(error), file=sys.stderr)
         return 2
-    report = run(cases, documents, top_k=top_k)
-    print(f"\n  {len(documents)} pages from {pages}\n")
+    try:
+        chosen = _retriever(retriever_name, documents)
+    except (ValueError, Exception) as error:  # noqa: B014 - VectorError is an Exception
+        print(str(error), file=sys.stderr)
+        return 2
+    report = (
+        run(cases, documents, top_k=top_k)
+        if chosen is None
+        else run(cases, documents, retriever=chosen, top_k=top_k)
+    )
+    label = retriever_name or "keyword"
+    print(f"\n  {len(documents)} pages from {pages}  ·  retriever: {label}\n")
     print(report.rendered())
     print()
     # Never fail on a low score: a number you are trying to improve must not be
@@ -107,19 +135,30 @@ def main(argv: list[str] | None = None) -> int:
     asker.add_argument("--provider", default="", help="ollama, moonshot, openai, groq, openrouter")
     asker.add_argument("--model", default="", help="the model id for that provider")
     asker.add_argument("--top-k", type=int, default=3)
+    asker.add_argument("--retriever", default="", help="keyword (default) or chroma")
 
     measurer = sub.add_parser("measure", help="hit rate against a labelled set")
     measurer.add_argument("--pages")
     measurer.add_argument("--cases", required=True, help="a JSONL labelled set")
     measurer.add_argument("--top-k", type=int, default=3)
+    measurer.add_argument(
+        "--retriever", default="", help="keyword (default) or chroma, with the vector extra"
+    )
 
     sub.add_parser("providers", help="the model lanes this knows about")
 
     args = parser.parse_args(argv)
     if args.command == "ask":
-        return _ask(args.question, _pages(args.pages), args.provider, args.model, args.top_k)
+        return _ask(
+            args.question,
+            _pages(args.pages),
+            args.provider,
+            args.model,
+            args.top_k,
+            args.retriever,
+        )
     if args.command == "measure":
-        return _measure(_pages(args.pages), Path(args.cases), args.top_k)
+        return _measure(_pages(args.pages), Path(args.cases), args.top_k, args.retriever)
     if args.command == "providers":
         return _providers()
     parser.print_help()

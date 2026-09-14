@@ -16,6 +16,7 @@ ai-coach = "gecko_ai_coach.cli:main"
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "ruff>=0.6", "mypy>=1.11"]
+vector = ["chromadb>=1.0"]
 
 [build-system]
 requires = ["hatchling"]

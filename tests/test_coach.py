@@ -265,3 +265,47 @@ def test_the_known_weakness_is_a_vocabulary_mismatch() -> None:
 
     assert result.refused
     assert "shares a word" in result.reason
+
+
+# --- the optional vector retriever -----------------------------------------
+
+chromadb = pytest.importorskip("chromadb", reason="the vector extra is optional")
+
+
+def test_the_vector_retriever_drops_into_the_same_seam() -> None:
+    """It must be usable anywhere `retrieve` is, with no change to the caller."""
+    from gecko_ai_coach.vector import build
+
+    result = answer("open a pull request", PAGES, client=EchoClient(), retriever=build(PAGES))
+
+    assert result.pages == ("one",)
+
+
+def test_without_a_floor_a_vector_index_can_never_refuse() -> None:
+    """The failure a vector store has and a keyword scorer does not.
+
+    Nearest neighbours are returned however far away they are, so "nothing in
+    these pages" becomes unreachable and the coach answers a question about
+    Kubernetes with course material. Measured on the Dev3Pack set: no floor
+    gains three answerable questions and loses both refusals.
+    """
+    from gecko_ai_coach.vector import build
+
+    unfloored = build(PAGES, min_score=0.0)
+    floored = build(PAGES, min_score=0.9)
+
+    assert unfloored("xylophone quarterly dividend", PAGES, 3), "no floor always answers"
+    assert floored("xylophone quarterly dividend", PAGES, 3) == [], "a floor can refuse"
+
+
+def test_the_vector_retriever_beats_the_keyword_one_on_vocabulary() -> None:
+    """The one thing embeddings are bought for, and the baseline's known miss.
+
+    "hand work in" and "open a pull request" share no token, so the keyword
+    baseline returns nothing. If this ever stops being true, the vector extra
+    has stopped earning its dependency.
+    """
+    from gecko_ai_coach.vector import build
+
+    assert retrieve("how do I hand work in", PAGES, 3) == []
+    assert build(PAGES, min_score=0.0)("how do I hand work in", PAGES, 3)
