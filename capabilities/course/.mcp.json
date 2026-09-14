@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "gecko-ai-coach-course": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "gecko-ai-coach @ git+https://github.com/Gecko-Academy/gecko-ai-coach.git@main",
+        "gecko-ai-coach-course"
+      ],
+      "env": {
+        "COACH_PAGES": "${COACH_PAGES}"
+      }
+    }
+  }
+}

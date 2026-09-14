@@ -1,0 +1,23 @@
+{
+  "name": "gecko-ai-coach",
+  "owner": {
+    "name": "Gecko-Academy",
+    "url": "https://github.com/Gecko-Academy/gecko-ai-coach"
+  },
+  "metadata": {
+    "description": "Course coaching for any agent harness \u2014 Agent Skills + MCP servers",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "gecko-ai-coach-course",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/Gecko-Academy/gecko-ai-coach.git",
+        "path": "capabilities/course",
+        "ref": "main"
+      },
+      "description": "Ask your course a question and get the passage that answers it, with the page id to open. Refuses when nothing in the pages supports an answer. Also measures the retriever against a labelled set, which is how a change to it is judged."
+    }
+  ]
+}

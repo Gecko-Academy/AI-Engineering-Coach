@@ -13,6 +13,7 @@ dependencies = []
 
 [project.scripts]
 ai-coach = "gecko_ai_coach.cli:main"
+gecko-ai-coach-course = "gecko_ai_coach.mcp:main"
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "ruff>=0.6", "mypy>=1.11"]

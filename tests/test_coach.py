@@ -6,6 +6,7 @@ a test suite that mocks the model into agreeing with it proves nothing.
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
@@ -309,3 +310,103 @@ def test_the_vector_retriever_beats_the_keyword_one_on_vocabulary() -> None:
 
     assert retrieve("how do I hand work in", PAGES, 3) == []
     assert build(PAGES, min_score=0.0)("how do I hand work in", PAGES, 3)
+
+
+# --- the MCP capability ----------------------------------------------------
+
+
+def _rpc(method: str, params: dict | None = None, identifier: int = 1) -> dict:
+    from gecko_ai_coach import mcp
+
+    request = {"jsonrpc": "2.0", "id": identifier, "method": method}
+    if params is not None:
+        request["params"] = params
+    return mcp.handle(request, PAGES, Path("data/dev3pack.jsonl")) or {}
+
+
+def test_the_server_speaks_the_version_the_client_asked_for() -> None:
+    """A server that insists on its own version breaks against a newer harness."""
+    result = _rpc("initialize", {"protocolVersion": "2024-11-05"})["result"]
+
+    assert result["protocolVersion"] == "2024-11-05"
+    assert result["serverInfo"]["name"] == "gecko-ai-coach-course"
+
+
+def test_an_unknown_protocol_version_falls_back_rather_than_failing() -> None:
+    result = _rpc("initialize", {"protocolVersion": "1999-01-01"})["result"]
+
+    from gecko_ai_coach.mcp import DEFAULT_PROTOCOL
+
+    assert result["protocolVersion"] == DEFAULT_PROTOCOL
+
+
+def test_a_notification_is_never_answered() -> None:
+    """Replying to a notification is a protocol violation some clients treat
+    as fatal, and it has no id to reply to anyway."""
+    from gecko_ai_coach import mcp
+
+    assert (
+        mcp.handle({"jsonrpc": "2.0", "method": "notifications/initialized"}, PAGES, Path("x"))
+        is None
+    )
+
+
+def test_every_tool_declares_a_schema_the_model_can_fill() -> None:
+    tools = _rpc("tools/list")["result"]["tools"]
+
+    assert {tool["name"] for tool in tools} == {
+        "ask_course",
+        "list_pages",
+        "measure_retrieval",
+    }
+    for tool in tools:
+        assert tool["inputSchema"]["type"] == "object"
+        # The description is the model's only manual for a tool it has never
+        # seen. An empty one is a tool that will be called wrongly or not at all.
+        assert len(tool["description"]) > 80
+
+
+def test_asking_returns_the_passage_and_names_its_page() -> None:
+    result = _rpc("tools/call", {"name": "ask_course", "arguments": {"question": "pull request"}})
+
+    body = result["result"]["content"][0]["text"]
+    assert "--- one" in body, "the page id must travel with the answer"
+    assert not result["result"].get("isError")
+
+
+def test_a_question_the_pages_do_not_answer_says_so_and_is_not_an_error() -> None:
+    """Refusing is a correct outcome. Flagging it as an error teaches the model
+    to retry, which is the opposite of what should happen."""
+    result = _rpc(
+        "tools/call", {"name": "ask_course", "arguments": {"question": "xylophone dividend"}}
+    )["result"]
+
+    assert "NOT IN THESE PAGES" in result["content"][0]["text"]
+    assert not result.get("isError")
+
+
+def test_listing_pages_can_be_filtered() -> None:
+    result = _rpc("tools/call", {"name": "list_pages", "arguments": {"contains": "structured"}})
+
+    assert "two" in result["result"]["content"][0]["text"]
+
+
+def test_an_unknown_tool_is_a_protocol_error_not_a_result() -> None:
+    result = _rpc("tools/call", {"name": "rm_rf", "arguments": {}})
+
+    assert result["error"]["code"] == -32602
+
+
+def test_the_loop_survives_a_line_that_is_not_json() -> None:
+    """A malformed line has no id to answer to, so the server must keep serving.
+    Exiting would take the whole session down over one bad write."""
+    import io
+
+    from gecko_ai_coach import mcp
+
+    stdin = io.StringIO('not json\n{"jsonrpc":"2.0","id":7,"method":"ping"}\n')
+    stdout = io.StringIO()
+    mcp.serve(PAGES, Path("x"), stdin=stdin, stdout=stdout)
+
+    answered = [json.loads(line) for line in stdout.getvalue().splitlines()]
+    assert [row["id"] for row in answered] == [7]

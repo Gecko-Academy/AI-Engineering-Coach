@@ -12,6 +12,7 @@ Built for the [Dev3Pack AI-Engineering Bootcamp](https://github.com/Gecko-Academ
 ## Contents
 
 - [Start here](#start-here)
+- [Use it inside your harness](#use-it-inside-your-harness)
 - [It is meant to be improved](#it-is-meant-to-be-improved)
 - [Where the headroom is](#where-the-headroom-is)
 - [Retrievers](#retrievers)
@@ -37,6 +38,42 @@ To use it from anywhere else, install it straight from git. **There is no publis
 ```bash
 uv pip install "gecko-ai-coach @ git+https://github.com/Gecko-Academy/gecko-ai-coach"
 ```
+
+## Use it inside your harness
+
+The coach also runs as an **MCP server**, so your assistant can ask the course
+questions while you work — in Claude Code, Codex, or anything that speaks MCP.
+
+A capability is two halves, and both live in [`capabilities/course/`](capabilities/course):
+a **Skill** that tells the agent when to reach for this and what the tools mean,
+and an **MCP server** that is the tools themselves. Neither substitutes for the other.
+
+```json
+{
+  "mcpServers": {
+    "gecko-ai-coach-course": {
+      "command": "uvx",
+      "args": ["--from", "gecko-ai-coach @ git+https://github.com/Gecko-Academy/gecko-ai-coach.git@main",
+               "gecko-ai-coach-course"],
+      "env": { "COACH_PAGES": "/path/to/dev3pack-cohort-2026-09/units/en" }
+    }
+  }
+}
+```
+
+| Tool | Does |
+|---|---|
+| `ask_course` | the passages that answer a question, each with the page id it came from |
+| `list_pages` | every page the coach can quote — also tells you whether a week has opened |
+| `measure_retrieval` | the hit rate against a labelled set, every miss named |
+
+It reads and nothing else: it never writes a file, fetches a URL, or looks
+outside the pages directory it was given. Retrieved page text is data, never
+instructions.
+
+**Adding your own capability** is a directory beside `course/` with the same two
+halves. The server is one stdlib file with no SDK, so you can read all of it
+before you copy it.
 
 ## It is meant to be improved
 
@@ -123,7 +160,7 @@ from gecko_ai_coach import corpus, coach
 
 documents = corpus.load(Path("units/en"))
 result = coach.answer("how do I hand a session in", documents)
-print(result.pages)          # ('unit0/how-to-submit',)
+print(result.pages)  # ('unit0/how-to-submit',)
 ```
 
 `coach.answer` takes `retriever=` and `client=`, so replacing either is one line rather than a fork.
