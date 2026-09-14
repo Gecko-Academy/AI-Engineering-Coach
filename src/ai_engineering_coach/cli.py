@@ -1,9 +1,9 @@
 """The command line: ask a question, or measure the thing that answers it.
 
-    course-coach ask "how do I hand in a session" --pages ./units/en
-    course-coach ask "explain structured outputs" --provider ollama
-    course-coach measure --pages ./units/en --cases data/coach.jsonl
-    course-coach providers
+    ai-coach ask "how do I hand in a session" --pages ./units/en
+    ai-coach ask "explain structured outputs" --provider ollama
+    ai-coach measure --pages ./units/en --cases data/coach.jsonl
+    ai-coach providers
 
 Two commands, because there are two things you do with a coach: use it, and
 find out whether your change to it helped.
@@ -15,10 +15,10 @@ import argparse
 import sys
 from pathlib import Path
 
-from course_coach import corpus
-from course_coach.coach import answer
-from course_coach.measure import CaseError, load_cases, run
-from course_coach.models import PROVIDERS, ModelError, get_client
+from ai_engineering_coach import corpus
+from ai_engineering_coach.coach import answer
+from ai_engineering_coach.measure import CaseError, load_cases, run
+from ai_engineering_coach.models import PROVIDERS, ModelError, get_client
 
 
 def _pages(argument: str | None) -> Path:
@@ -97,7 +97,7 @@ def _providers() -> int:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        prog="course-coach", description="Ask a course a question, and measure what answers it."
+        prog="ai-coach", description="Ask a course a question, and measure what answers it."
     )
     sub = parser.add_subparsers(dest="command")
 

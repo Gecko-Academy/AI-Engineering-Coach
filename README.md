@@ -1,13 +1,13 @@
-# course-coach
+# AI Engineering Coach
 
 Ask a course a question, get the passage that answers it, and a citation you can
 open. Then measure the thing that found it, and make it better.
 
 ```bash
-pip install course-coach
+pip install ai-engineering-coach
 
-course-coach ask "how do I hand a session in" --pages ./units/en
-course-coach measure --pages ./units/en --cases data/coach.jsonl
+ai-coach ask "how do I hand a session in" --pages ./units/en
+ai-coach measure --pages ./units/en --cases data/coach.jsonl
 ```
 
 No key, no download, no network: the default lane retrieves from the pages and
@@ -57,7 +57,7 @@ in numbers.
 Any OpenAI-shaped endpoint, over stdlib `urllib` — no SDK, no wheel to build.
 
 ```bash
-course-coach providers
+ai-coach providers
 ```
 
 | Lane | Key | Notes |
@@ -84,7 +84,7 @@ of having a seam.
 
 ```python
 from pathlib import Path
-from course_coach import corpus, coach
+from ai_engineering_coach import corpus, coach
 
 documents = corpus.load(Path("units/en"))
 result = coach.answer("how do I hand a session in", documents)
@@ -96,4 +96,4 @@ rather than a fork.
 
 ## Licence
 
-Apache-2.0.
+MIT.

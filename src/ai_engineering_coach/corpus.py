@@ -21,7 +21,7 @@ import re
 from collections.abc import Callable, Iterable
 from pathlib import Path
 
-from course_coach.retrieve import Document
+from ai_engineering_coach.retrieve import Document
 
 #: Directory names that never enter a corpus, matched on any path segment.
 EXCLUDED = frozenset({"solutions", "node_modules", "__pycache__", ".git", ".ipynb_checkpoints"})

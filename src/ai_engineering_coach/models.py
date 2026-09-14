@@ -14,7 +14,7 @@ WHAT A MODEL CHANGE MAY MOVE, AND WHAT IT MAY NOT. It moves wording, latency,
 cost and how often the answer is right. It does not move what the retriever
 found, which passages reached the prompt, or whether a citation was verified --
 those are yours, and they are where most of the headroom is. Measure before and
-after with `course-coach measure` rather than trusting the size of the model.
+after with `ai-coach measure` rather than trusting the size of the model.
 """
 
 from __future__ import annotations

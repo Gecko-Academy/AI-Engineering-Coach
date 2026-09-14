@@ -9,7 +9,7 @@ a genuinely good one to have made. There is one rule.
 after, on a named set.** Paste the two `measure` outputs.
 
 ```bash
-course-coach measure --pages ./units/en --cases data/dev3pack.jsonl
+ai-coach measure --pages ./units/en --cases data/dev3pack.jsonl
 ```
 
 That is the whole bar. It is not bureaucracy: without it, neither you nor anyone
@@ -77,4 +77,4 @@ with no dependencies, no download and no network, and that is a feature.
 
 ## Licence
 
-Apache-2.0. By contributing you agree your contribution is licensed under it.
+MIT. By contributing you agree your contribution is licensed under it.

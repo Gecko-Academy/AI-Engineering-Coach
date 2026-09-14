@@ -24,7 +24,7 @@ order is measured rather than assumed:
      thing here that catches a confident fabrication
   6. the model itself
 
-Most people arrive believing 6 is the whole job. `course-coach measure` is there
+Most people arrive believing 6 is the whole job. `ai-coach measure` is there
 to disagree with them in numbers.
 """
 
@@ -34,8 +34,8 @@ import re
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
 
-from course_coach.models import Client, EchoClient, ModelError
-from course_coach.retrieve import Document, ScoredChunk, retrieve
+from ai_engineering_coach.models import Client, EchoClient, ModelError
+from ai_engineering_coach.retrieve import Document, ScoredChunk, retrieve
 
 Retriever = Callable[[str, Sequence[Document], int], list[ScoredChunk]]
 

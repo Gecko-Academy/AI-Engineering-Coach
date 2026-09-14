@@ -6,7 +6,7 @@ beat on a labelled set before it earns its place.
 
 IT IS ALSO DELIBERATELY MEDIOCRE. This file is the thing you are invited to
 improve. Every knob is in it and nothing is hidden: the stopword list, the chunk
-size, how a score is computed, how ties break. `course-coach measure` prints the
+size, how a score is computed, how ties break. `ai-coach measure` prints the
 number that says how mediocre, and a pull request that moves it -- and says by
 how much, on which set -- is the contribution this project wants.
 
