@@ -10,11 +10,11 @@ from pathlib import Path
 
 import pytest
 
-from ai_engineering_coach import corpus
-from ai_engineering_coach.coach import answer, verify
-from ai_engineering_coach.measure import Case, load_cases, run
-from ai_engineering_coach.models import EchoClient, ModelError, get_client
-from ai_engineering_coach.retrieve import Document, retrieve
+from gecko_ai_coach import corpus
+from gecko_ai_coach.coach import answer, verify
+from gecko_ai_coach.measure import Case, load_cases, run
+from gecko_ai_coach.models import EchoClient, ModelError, get_client
+from gecko_ai_coach.retrieve import Document, retrieve
 
 
 class Recorder:

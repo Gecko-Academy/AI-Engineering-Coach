@@ -15,10 +15,10 @@ import argparse
 import sys
 from pathlib import Path
 
-from ai_engineering_coach import corpus
-from ai_engineering_coach.coach import answer
-from ai_engineering_coach.measure import CaseError, load_cases, run
-from ai_engineering_coach.models import PROVIDERS, ModelError, get_client
+from gecko_ai_coach import corpus
+from gecko_ai_coach.coach import answer
+from gecko_ai_coach.measure import CaseError, load_cases, run
+from gecko_ai_coach.models import PROVIDERS, ModelError, get_client
 
 
 def _pages(argument: str | None) -> Path:

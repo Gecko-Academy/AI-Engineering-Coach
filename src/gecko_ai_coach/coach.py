@@ -34,8 +34,8 @@ import re
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
 
-from ai_engineering_coach.models import Client, EchoClient, ModelError
-from ai_engineering_coach.retrieve import Document, ScoredChunk, retrieve
+from gecko_ai_coach.models import Client, EchoClient, ModelError
+from gecko_ai_coach.retrieve import Document, ScoredChunk, retrieve
 
 Retriever = Callable[[str, Sequence[Document], int], list[ScoredChunk]]
 

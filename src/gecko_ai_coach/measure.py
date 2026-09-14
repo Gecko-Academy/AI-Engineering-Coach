@@ -24,8 +24,8 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
-from ai_engineering_coach.coach import Retriever
-from ai_engineering_coach.retrieve import Document, retrieve
+from gecko_ai_coach.coach import Retriever
+from gecko_ai_coach.retrieve import Document, retrieve
 
 
 class CaseError(Exception):

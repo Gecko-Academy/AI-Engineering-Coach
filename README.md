@@ -1,10 +1,10 @@
-# AI Engineering Coach
+# gecko-ai-coach
 
 Ask a course a question, get the passage that answers it, and a citation you can
 open. Then measure the thing that found it, and make it better.
 
 ```bash
-pip install ai-engineering-coach
+pip install gecko-ai-coach
 
 ai-coach ask "how do I hand a session in" --pages ./units/en
 ai-coach measure --pages ./units/en --cases data/coach.jsonl
@@ -84,7 +84,7 @@ of having a seam.
 
 ```python
 from pathlib import Path
-from ai_engineering_coach import corpus, coach
+from gecko_ai_coach import corpus, coach
 
 documents = corpus.load(Path("units/en"))
 result = coach.answer("how do I hand a session in", documents)
